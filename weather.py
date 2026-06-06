@@ -129,12 +129,13 @@ async def get_forecast(il: str) -> dict:
 
 
 async def get_historical(il: str, start: date, end: Optional[date] = None) -> dict:
-    """Geçmiş hava verilerini çeker (GDD hesabı için)."""
+    """Geçmiş hava verilerini çeker (GDD hesabı için). Hata durumunda boş döner."""
+    _empty = {"daily": {"temperature_2m_max": [], "temperature_2m_min": [], "time": []}}
     lat, lon = get_koordinat(il)
     end = end or (date.today() - timedelta(days=1))
     # Archive API bir gün geriden gelir
     if start >= end:
-        return {"daily": {"temperature_2m_max": [], "temperature_2m_min": [], "time": []}}
+        return _empty
     params = {
         "latitude": lat,
         "longitude": lon,
@@ -143,10 +144,14 @@ async def get_historical(il: str, start: date, end: Optional[date] = None) -> di
         "daily": "temperature_2m_max,temperature_2m_min",
         "timezone": "Europe/Istanbul",
     }
-    async with httpx.AsyncClient(timeout=20) as client:
-        resp = await client.get(ARCHIVE_URL, params=params)
-        resp.raise_for_status()
-        return resp.json()
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            resp = await client.get(ARCHIVE_URL, params=params)
+            resp.raise_for_status()
+            return resp.json()
+    except Exception:
+        # Archive API erişilemezse GDD sıfırdan başlar, forecast yine de çalışır
+        return _empty
 
 
 def hava_ozeti(forecast: dict) -> str:
@@ -165,10 +170,4 @@ def hava_ozeti(forecast: dict) -> str:
     if total_rain > 20:
         rain_line = "🌧️ Yoğun yağış bekleniyor"
     elif total_rain > 5:
-        rain_line = "🌦️ Ara ara yağışlı"
-    elif max_rain_prob > 60:
-        rain_line = "⛅ Yağmur ihtimali yüksek"
-    else:
-        rain_line = "☀️ Büyük ölçüde açık"
-
-    return f"{temp_line}\n{rain_line}"
+        rain_line = "🌦️
