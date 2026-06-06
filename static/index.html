@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarla Danışmanı — WhatsApp Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="device">
+
+  <!-- ── WhatsApp Header ── -->
+  <div class="wa-header">
+    <div class="wa-avatar">🌱</div>
+    <div class="wa-header-info">
+      <div class="wa-name">Tarla Danışmanı</div>
+      <div class="wa-status" id="wa-status">Çevrimiçi</div>
+    </div>
+  </div>
+
+  <!-- ── Kayıt ilerleme çubuğu ── -->
+  <div class="progress-bar" id="progress-bar" style="display:none">
+    <div class="progress-step" id="ps0"></div>
+    <div class="progress-step" id="ps1"></div>
+    <div class="progress-step" id="ps2"></div>
+    <div class="progress-step" id="ps3"></div>
+    <div class="progress-step" id="ps4"></div>
+    <span class="progress-label">1 / 5</span>
+  </div>
+
+  <!-- ════════ BÖLÜM A — KAYIT AKIŞI ════════ -->
+
+  <!-- Ekran 1: Karşılama -->
+  <div class="screen" id="screen-welcome">
+    <div class="wa-body">
+      <div class="bubble incoming">
+        <span class="bubble-title">👋 Merhaba!</span>
+        Ben Tarla Danışmanı'yım.<br><br>
+        Tarlana her hafta <strong>gerçek hava verisiyle</strong> sulama zamanı ve öneriler gönderirim.<br><br>
+        Tamamen <strong>ücretsiz.</strong>
+        <div class="bubble-time">09:00</div>
+      </div>
+      <div class="bubble incoming">
+        Başlamak ister misin?
+        <div class="btn-group">
+          <button class="wa-btn primary" onclick="showScreen('screen-il')">✅ Evet, başlayalım</button>
+          <button class="wa-btn secondary" onclick="showScreen('screen-vazgec')">❌ Şimdi değil</button>
+        </div>
+        <div class="bubble-time">09:00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ekran 2: İl seçimi -->
+  <div class="screen" id="screen-il">
+    <div class="wa-body">
+      <div class="bubble outgoing">
+        ✅ Evet, başlayalım
+        <div class="bubble-time">09:01 ✓✓</div>
+      </div>
+      <div class="bubble incoming">
+        <span class="bubble-title">📍 Hangi ilde tarım yapıyorsunuz?</span>
+        Aşağıdan seçin:
+        <div class="btn-group">
+          <button class="wa-btn outline" onclick="selectIl('Konya')">Konya</button>
+          <button class="wa-btn outline" onclick="selectIl('İzmir')">İzmir</button>
+          <button class="wa-btn outline" onclick="selectIl('Ankara')">Ankara</button>
+          <button class="wa-btn outline" onclick="selectIl('Adana')">Adana</button>
+          <button class="wa-btn secondary" onclick="selectIl('diger')">Diğer il...</button>
+        </div>
+        <div class="bubble-time">09:01</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ekran 3: Ürün seçimi -->
+  <div class="screen" id="screen-urun">
+    <div class="wa-body">
+      <div class="bubble incoming">
+        <span class="bubble-title" id="urun-il-label">Konya seçildi ✓</span>
+        <div class="bubble-time">09:02</div>
+      </div>
+      <div class="bubble incoming">
+        <span class="bubble-title">🌾 Ne yetiştiriyorsunuz?</span>
+        <div class="btn-group">
+          <button class="wa-btn outline" onclick="selectUrun('bugday')">🌾 Buğday</button>
+          <button class="wa-btn outline" onclick="selectUrun('aycicek')">🌻 Ayçiçeği</button>
+          <button class="wa-btn outline" onclick="selectUrun('pancar')">🍬 Şeker pancarı</button>
+          <button class="wa-btn outline" onclick="selectUrun('misir')">🌽 Mısır</button>
+          <button class="wa-btn secondary" onclick="selectUrun('diger')">Diğer ürün...</button>
+        </div>
+        <div class="bubble-time">09:02</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ekran 4: Ekim tarihi -->
+  <div class="screen" id="screen-ekim">
+    <div class="wa-body">
+      <div class="bubble outgoing">
+        <span id="ekim-urun-label">🌾 Buğday</span>
+        <div class="bubble-time">09:03 ✓✓</div>
+      </div>
+      <div class="bubble incoming">
+        <span class="bubble-title">📅 Ne zaman ektiniz?</span>
+        Ayı seçin:
+        <div class="btn-group">
+          <button class="wa-btn outline" onclick="selectAy('Ekim')">Ekim</button>
+          <button class="wa-btn outline" onclick="selectAy('Kasım')">Kasım</button>
+          <button class="wa-btn outline" onclick="selectAy('Aralık')">Aralık</button>
+          <button class="wa-btn secondary" onclick="selectAy('diger')">Başka ay...</button>
+        </div>
+        <div class="bubble-time">09:03</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ekran 5: Onay -->
+  <div class="screen" id="screen-onay">
+    <div class="wa-body">
+      <div class="bubble incoming green">
+        <span class="bubble-title green">✅ Kaydınız tamam!</span>
+        <span id="onay-bilgiler">📍 Konya<br>🌾 Buğday<br>📅 Ekim ayı ekimi</span><br><br>
+        Her <strong>Pazartesi ve Perşembe</strong> sabahı size mesaj göndereceğim.
+        <div class="bubble-time">09:04</div>
+      </div>
+      <div class="bubble incoming" id="onay-cta">
+        <button class="wa-btn primary" onclick="goGercekOneri()">🌦️ Bugünkü gerçek öneriyi gör</button>
+        <button class="wa-btn secondary" style="margin-top:6px" onclick="showScreen('screen-msg-sula')">📩 Örnek mesajları gör</button>
+        <div class="bubble-time">09:04</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ GERÇEK ÖNERİ EKRANI ════════ -->
+  <div class="screen" id="screen-gercek-oneri">
+    <div class="wa-body" id="gercek-oneri-body">
+      <!-- Dinamik olarak doldurulur -->
+    </div>
+  </div>
+
+  <!-- ════════ BÖLÜM A — ÖZEL DURUMLAR ════════ -->
+
+  <div class="screen" id="screen-vazgec">
+    <div class="wa-body">
+      <div class="bubble outgoing">❌ Şimdi değil<div class="bubble-time">09:01 ✓✓</div></div>
+      <div class="bubble incoming">
+        <span class="bubble-title">Tamam, sorun değil.</span>
+        Hazır olduğunuzda tekrar yazabilirsiniz.<br>
+        Başlamak için <strong>MERHABA</strong> yazmanız yeterli.
+        <div class="bubble-time">09:01</div>
+      </div>
+      <div class="bubble incoming" style="margin-top:8px">
+        <button class="wa-btn primary" onclick="showScreen('screen-welcome')">← Geri dön</button>
+        <div class="bubble-time">09:01</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-diger-il">
+    <div class="wa-body">
+      <div class="bubble outgoing">Diğer il...<div class="bubble-time">09:02 ✓✓</div></div>
+      <div class="bubble incoming">
+        <span class="bubble-title">📍 Hangi il?</span>
+        İlinizin adını yazın:
+        <div class="text-input-mock">
+          <input type="text" id="input-il" placeholder="Örnek: Sivas" maxlength="30">
+        </div>
+        <div class="btn-group" style="margin-top:8px">
+          <button class="wa-btn primary" onclick="submitDigerIl()">Gönder</button>
+        </div>
+        <div class="bubble-time">09:02</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-diger-urun">
+    <div class="wa-body">
+      <div class="bubble outgoing">Diğer ürün...<div class="bubble-time">09:03 ✓✓</div></div>
+      <div class="bubble incoming">
+        <span class="bubble-title">🌱 Hangi ürün?</span>
+        Ürün adını yazın:
+        <div class="text-input-mock">
+          <input type="text" id="input-urun" placeholder="Örnek: Domates" maxlength="30">
+        </div>
+        <div class="btn-group" style="margin-top:8px">
+          <button class="wa-btn primary" onclick="submitDigerUrun()">Gönder</button>
+        </div>
+        <div class="bubble-time">09:03</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-diger-urun-uyari">
+    <div class="wa-body">
+      <div class="bubble incoming yellow">
+        <span class="bubble-title yellow">Kaydedildi.</span>
+        Henüz bu ürün için tam destek yok.<br>
+        Yakında ekleyeceğiz — şimdilik genel öneriler göndereceğiz.
+        <div class="bubble-time">09:04</div>
+      </div>
+      <div class="bubble incoming" style="margin-top:4px">
+        <button class="wa-btn primary" onclick="digerUrunDevam()">Devam et →</button>
+        <div class="bubble-time">09:04</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-diger-ay">
+    <div class="wa-body">
+      <div class="bubble outgoing">Başka ay...<div class="bubble-time">09:04 ✓✓</div></div>
+      <div class="bubble incoming">
+        <span class="bubble-title">📅 Hangi ay ektiniz?</span>
+        <div class="btn-group">
+          <button class="wa-btn outline" onclick="submitDigerAy('Ocak')">Ocak</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Şubat')">Şubat</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Mart')">Mart</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Nisan')">Nisan</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Mayıs')">Mayıs</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Haziran')">Haziran</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Temmuz')">Temmuz</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Ağustos')">Ağustos</button>
+          <button class="wa-btn outline" onclick="submitDigerAy('Eylül')">Eylül</button>
+        </div>
+        <div class="bubble-time">09:04</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ BÖLÜM B — HAFTALIK MESAJLAR (Statik demo) ════════ -->
+
+  <div class="screen" id="screen-msg-sula">
+    <div class="wa-body">
+      <div class="chat-divider">Pazartesi, 3 Mart</div>
+      <div class="bubble incoming green">
+        <span class="bubble-title green">🚿 Bugün sulayın.</span>
+        Hava kuru, bu hafta yağmur yok.<br>
+        En iyi zaman: <strong>sabah erken.</strong>
+        <div class="bubble-time">07:30</div>
+      </div>
+      <div class="bubble incoming">
+        <span style="font-size:12px;color:#555">🌡️ Bu hafta: 8°C — 14°C<br>☁️ Bulutlu, yağmur yok</span>
+        <div class="bubble-time">07:30</div>
+      </div>
+      <div class="bubble incoming" style="margin-top:8px">
+        <button class="wa-btn outline" onclick="tesekkurEt()">Teşekkürler yaz →</button>
+        <button class="wa-btn secondary" style="margin-top:6px" onclick="anlamsizMesaj()">Başka bir şey yaz →</button>
+        <button class="wa-btn primary" style="margin-top:6px" onclick="goGercekOneri()">🌦️ Gerçek öneriyi gör</button>
+        <div class="bubble-time">07:30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-msg-sulama">
+    <div class="wa-body">
+      <div class="chat-divider">Pazartesi, 10 Mart</div>
+      <div class="bubble incoming">
+        <span class="bubble-title">☔ Bu hafta sulamayın.</span>
+        Salı ve Çarşamba yağmur bekleniyor.<br>
+        Toprak zaten yeterince nemli olacak.
+        <div class="bubble-time">07:30</div>
+      </div>
+      <div class="bubble incoming">
+        <span style="font-size:12px;color:#555">🌡️ Bu hafta: 6°C — 11°C<br>🌧️ Salı — Çarşamba yağmurlu</span>
+        <div class="bubble-time">07:30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-msg-don">
+    <div class="wa-body">
+      <div class="chat-divider">Perşembe, 13 Mart</div>
+      <div class="bubble incoming red">
+        <span class="bubble-title red">⚠️ Dikkat: Don riski var.</span>
+        Bu gece sıcaklık sıfırın altına düşebilir.<br><br>
+        Buğdayınız zarar görebilir.<br>
+        Mümkünse <strong>akşam sulayın</strong> — toprak ısısı korur.
+        <div class="bubble-time">07:30</div>
+      </div>
+      <div class="bubble incoming">
+        <span style="font-size:12px;color:#555">🌡️ Bu gece: <strong style="color:#c0392b">-2°C</strong><br>❄️ Sabaha kadar soğuk devam eder</span>
+        <div class="bubble-time">07:30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-msg-hastalik">
+    <div class="wa-body">
+      <div class="chat-divider">Pazartesi, 17 Mart</div>
+      <div class="bubble incoming yellow">
+        <span class="bubble-title yellow">🐛 Dikkat: Hastalık riski.</span>
+        Bu hafta bölgenizde yaprak pası görülme ihtimali yüksek.<br><br>
+        Tarlayı yakından takip edin.<br>
+        Sarı lekeler görürseniz en yakın <strong>ziraat odasını</strong> arayın.
+        <div class="bubble-time">07:30</div>
+      </div>
+      <div class="bubble incoming">
+        <span style="font-size:12px;color:#555">🌡️ Bu hafta: 12°C — 18°C<br>💧 Nemli hava — risk artar</span>
+        <div class="bubble-time">07:30</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ BÖLÜM B — ÖZEL DURUMLAR ════════ -->
+
+  <div class="screen" id="screen-tesekkur">
+    <div class="wa-body">
+      <div class="bubble incoming green">
+        <span class="bubble-title green">🚿 Bugün sulayın.</span>
+        Hava kuru, bu hafta yağmur yok.
+        <div class="bubble-time">07:30</div>
+      </div>
+      <div class="bubble outgoing">teşekkürler<div class="bubble-time">08:15 ✓✓</div></div>
+      <div class="bubble incoming">
+        Rica ederim, kolay gelsin! 🌾<br>
+        Bir sonraki mesaj <strong>Perşembe</strong> sabahı gelecek.
+        <div class="bubble-time">08:15</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-anlamsiz">
+    <div class="wa-body">
+      <div class="bubble outgoing">bu ne biçim program ya<div class="bubble-time">10:22 ✓✓</div></div>
+      <div class="bubble incoming">
+        <span class="bubble-title">Sizi anlayamadım.</span>
+        Size yardımcı olabilmem için aşağıdan seçin:
+        <div class="btn-group">
+          <button class="wa-btn outline" onclick="menuSecim('guncelle')">📋 Bilgilerimi güncelle</button>
+          <button class="wa-btn outline" onclick="menuSecim('nasil')">❓ Nasıl çalışır?</button>
+          <button class="wa-btn danger"  onclick="menuSecim('durdur')">🚫 Mesajları durdur</button>
+        </div>
+        <div class="bubble-time">10:22</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-nasil">
+    <div class="wa-body">
+      <div class="bubble outgoing">❓ Nasıl çalışır?<div class="bubble-time">10:23 ✓✓</div></div>
+      <div class="bubble incoming blue">
+        <span class="bubble-title blue">Tarla Danışmanı nasıl çalışır?</span>
+        Her hafta hava durumu ve tarla bilgilerinize göre sulama önerisi gönderiyorum.<br><br>
+        📍 Konumunuz + 🛰️ Open-Meteo verileri + 🌱 GDD büyüme modeli<br><br>
+        Bu üçünü birleştirip size en doğru öneriyi sunuyorum.<br>
+        <strong>Uygulama yok, kurulum yok, sadece WhatsApp.</strong>
+        <div class="bubble-time">10:23</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-guncelle">
+    <div class="wa-body">
+      <div class="bubble incoming">
+        <span class="bubble-title">Şu an kayıtlı bilgileriniz:</span>
+        <span id="guncelle-bilgi">📍 Konya<br>🌾 Buğday<br>📅 Ekim ayı ekimi</span><br><br>
+        Neyi değiştirmek istiyorsunuz?
+        <div class="btn-group">
+          <button class="wa-btn outline" onclick="guncelleSecim('il')">📍 İl değiştir</button>
+          <button class="wa-btn outline" onclick="guncelleSecim('urun')">🌾 Ürün değiştir</button>
+          <button class="wa-btn outline" onclick="guncelleSecim('ekim')">📅 Ekim tarihi değiştir</button>
+          <button class="wa-btn secondary" onclick="showScreen('screen-msg-sula')">Değişiklik yok</button>
+        </div>
+        <div class="bubble-time">11:00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-durdur-onay">
+    <div class="wa-body">
+      <div class="bubble outgoing">🚫 Mesajları durdur<div class="bubble-time">14:05 ✓✓</div></div>
+      <div class="bubble incoming red">
+        <span class="bubble-title red">Mesajlar durdurulacak.</span>
+        Emin misiniz?
+        <div class="btn-group">
+          <button class="wa-btn danger"  onclick="durdurOnay('evet')">Evet, durdur</button>
+          <button class="wa-btn primary" onclick="durdurOnay('hayir')">Hayır, devam et</button>
+        </div>
+        <div class="bubble-time">14:05</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-durdur-tamam">
+    <div class="wa-body">
+      <div class="bubble outgoing">Evet, durdur<div class="bubble-time">14:06 ✓✓</div></div>
+      <div class="bubble incoming">
+        <span class="bubble-title">Mesajlar durduruldu.</span>
+        Tekrar başlamak isterseniz <strong>MERHABA</strong> yazmanız yeterli.
+        <div class="bubble-time">14:06</div>
+      </div>
+      <div class="bubble incoming" style="margin-top:8px">
+        <button class="wa-btn primary" onclick="showScreen('screen-geri-donus')">Geri dön →</button>
+        <div class="bubble-time">14:06</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-teknik-hata">
+    <div class="wa-body">
+      <div class="chat-divider">Pazartesi, 24 Mart</div>
+      <div class="bubble incoming red">
+        <span class="bubble-title red">⚙️ Teknik bir sorun oluştu.</span>
+        Bu hafta öneri gönderemedik.<br>
+        Ekibimiz sorunu çözüyor — Perşembe mesajınız normal gelecek.
+        <div class="bubble-time">07:30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-geri-donus">
+    <div class="wa-body">
+      <div class="bubble outgoing">MERHABA<div class="bubble-time">10:00 ✓✓</div></div>
+      <div class="bubble incoming green">
+        <span class="bubble-title green">👋 Tekrar hoş geldiniz!</span>
+        Kaldığınız yerden devam edelim mi?<br>
+        <span id="geri-don-bilgi">📍 Konya — 🌾 Buğday</span>
+        <div class="btn-group">
+          <button class="wa-btn primary"   onclick="geriDonDevam(true)">✅ Evet, devam</button>
+          <button class="wa-btn secondary" onclick="geriDonDevam(false)">Bilgilerimi güncelle</button>
+        </div>
+        <div class="bubble-time">10:00</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /device -->
+
+<!-- ── Demo Navigasyon Barı ── -->
+<nav style="
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #1a1a1a; padding: 8px 12px;
+  display: flex; gap: 6px; flex-wrap: wrap;
+  justify-content: center; z-index: 100;
+">
+  <button onclick="demoGo('screen-welcome')"        style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#075E54;color:#fff;cursor:pointer">1.Karşılama</button>
+  <button onclick="demoGo('screen-il')"             style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#075E54;color:#fff;cursor:pointer">2.İl</button>
+  <button onclick="demoGo('screen-urun')"           style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#075E54;color:#fff;cursor:pointer">3.Ürün</button>
+  <button onclick="demoGo('screen-ekim')"           style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#075E54;color:#fff;cursor:pointer">4.Ekim</button>
+  <button onclick="demoGo('screen-onay')"           style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#075E54;color:#fff;cursor:pointer">5.Onay</button>
+  <button onclick="goGercekOneri()"                 style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#128C7E;color:#fff;cursor:pointer">🌦 Gerçek Öneri</button>
+  <button onclick="demoGo('screen-msg-sula')"       style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#25D366;color:#fff;cursor:pointer">Sulayın</button>
+  <button onclick="demoGo('screen-msg-sulama')"     style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#25D366;color:#fff;cursor:pointer">Sulamayın</button>
+  <button onclick="demoGo('screen-msg-don')"        style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#e53e3e;color:#fff;cursor:pointer">Don</button>
+  <button onclick="demoGo('screen-msg-hastalik')"   style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#f0a500;color:#fff;cursor:pointer">Hastalık</button>
+  <button onclick="demoGo('screen-anlamsiz')"       style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#444;color:#fff;cursor:pointer">Anlamsız</button>
+  <button onclick="demoGo('screen-nasil')"          style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#444;color:#fff;cursor:pointer">Nasıl?</button>
+  <button onclick="demoGo('screen-teknik-hata')"    style="font-size:10px;padding:4px 8px;border-radius:8px;border:none;background:#444;color:#fff;cursor:pointer">Hata</button>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>

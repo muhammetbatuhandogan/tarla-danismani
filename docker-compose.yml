@@ -1,0 +1,8 @@
+services:
+  tarla-danismani:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./tarla.db:/app/tarla.db
+    restart: unless-stopped
